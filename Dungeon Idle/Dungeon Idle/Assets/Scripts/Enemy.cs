@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
+    public float enemyDamage = 10f;
+
     public float startSpeed = 1f;
     public float startHealth = 10f;
 
@@ -40,6 +42,13 @@ public class Enemy : MonoBehaviour
         //GameObject effect = (GameObject)Instantiate(deathEffect, transform.position, Quaternion.identity);
         //Destroy(effect, 5f);
 
+        Destroy(gameObject);
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision) {
+        Debug.Log("Kolizja");
+        GameController.instance.PlayerHP -= enemyDamage;
+        speed = 0f;
         Destroy(gameObject);
     }
 }
