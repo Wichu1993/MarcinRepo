@@ -8,6 +8,7 @@ using System.IO;
 
 public class GameController : MonoBehaviour
 {
+    public Image Dead_Message;
     public Image playerHPbar;
     [SerializeField]
     public float PlayerHP;
@@ -18,6 +19,7 @@ public class GameController : MonoBehaviour
     {
         instance = this;
         PlayerHP = start_PlayerHP;
+        Dead_Message.enabled = false;
         Save();
     }
 
@@ -31,16 +33,16 @@ public class GameController : MonoBehaviour
 
     void GameOver() {
         Time.timeScale = 0;
-        // dodać wiadomość że zostałeś pokonany
+        Dead_Message.enabled = true;
     }
 
     public void Save() {
         BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(Application.persistentDataPath + "/playerInfo.dat");
+        FileStream file = File.Open(Application.persistentDataPath + "/playerInfo.dat", FileMode.OpenOrCreate);
         Debug.Log(Application.persistentDataPath.ToString());
 
         PlayerData data = new PlayerData();
-        data.PlayerHP = PlayerHP;
+        data.PlayerHP = PlayerHP; // test
 
         bf.Serialize(file, data);
         file.Close();
@@ -53,7 +55,7 @@ public class GameController : MonoBehaviour
             PlayerData data = (PlayerData)bf.Deserialize(file);
             file.Close();
 
-            PlayerHP = data.PlayerHP;
+            PlayerHP = data.PlayerHP;// test
 
         }
     }
@@ -61,6 +63,7 @@ public class GameController : MonoBehaviour
 
 [Serializable]
 class PlayerData {
+    // data to save and load
     public float PlayerHP;
     public float experience;
 }
