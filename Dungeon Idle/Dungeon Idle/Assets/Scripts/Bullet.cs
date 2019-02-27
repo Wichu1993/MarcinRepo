@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [SerializeField]
-    private Transform target;
-
+ [SerializeField] private Transform target;
     public float speed = 2f;
+    private float damage;
 
-    public int damage = 1;
+    public GameObject projectileExplosion;
+    public static Bullet instance;
 
     enum FacingDirection {
         UP = 270,
@@ -22,21 +22,21 @@ public class Bullet : MonoBehaviour
         target = _target;
     }
 
-
-
-    // Start is called before the first frame update
     void Start()
     {
-        
+        damage = PlayerStats.damage + PlayerStats.baseDamage * PlayerStats.cityDamage * PlayerStats.heroDamage * PlayerStats.rebirthDamage * PlayerStats.perkDamage;
+
+        instance = this;
+       
     }
 
-    // Update is called once per frame
     void Update()
     {
         if(target == null) {
             Destroy(gameObject);
             return;
         }
+        
 
         Vector2 dir = target.position - transform.position;
         float distanceThisFrame = speed * Time.deltaTime;
@@ -57,8 +57,11 @@ public class Bullet : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, q, Time.deltaTime * theSpeed);
     }
     void HitTarget() {
+        
         Damage(target);
         Destroy(gameObject);
+        Instantiate(projectileExplosion, transform.position, Quaternion.identity);
+        Destroy(projectileExplosion, 2f);
     }
      void Damage(Transform enemy) {
         Enemy e = enemy.GetComponent<Enemy>();

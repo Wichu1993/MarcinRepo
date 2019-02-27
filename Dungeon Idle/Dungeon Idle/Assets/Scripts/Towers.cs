@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class Towers : MonoBehaviour
 {
-    private int maxTowers = 5;
-    [SerializeField]
+    public static Towers instance;
+    [SerializeField] AudioClip shoot_sound;
+    private AudioSource _audio;
     private Enemy targetEnemy;
     private Transform target;
 
@@ -19,7 +20,10 @@ public class Towers : MonoBehaviour
 
     void Start()
     {
-        InvokeRepeating("UpdateTarget", 0f, 0.5f);
+        _audio = GetComponent<AudioSource>();
+        InvokeRepeating("UpdateTarget", 0f, 0.1f);
+        instance = this;
+       
     }
 
     void UpdateTarget() {
@@ -61,6 +65,8 @@ public class Towers : MonoBehaviour
     void Shoot() {
         GameObject bulletGO = (GameObject)Instantiate(bulletPrefab, firePoint.position, firePoint.rotation) as GameObject;
         Bullet bullet = bulletGO.GetComponent<Bullet>();
+        _audio.clip = shoot_sound;
+        _audio.Play();
 
         if(bullet != null) {
             bullet.Seek(target);

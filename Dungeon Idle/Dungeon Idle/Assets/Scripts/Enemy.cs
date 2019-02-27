@@ -13,9 +13,10 @@ public class Enemy : MonoBehaviour
     private float health;
     private float speed;
 
-   // public GameObject deathEffect; // efekt po śmierci
+    // public GameObject deathEffect; // efekt po śmierci
+    public GameObject coin; //spawn cointa po śmierci
 
-    public Image healthBar;// paski życia nad postacią
+    public Image healthBar;// paski życia nad enemy
 
     private bool isDead = false;
 
@@ -25,12 +26,18 @@ public class Enemy : MonoBehaviour
     }
 
     private void Update() {
-        transform.Translate(speed * Time.deltaTime, 0f, 0f);
+        transform.Translate(Vector2.left * speed * (Time.time / 10 + 1) * Time.deltaTime);
     }
 
     public void TakeDamage(float amount) {
+        amount = PlayerStats.damage =
+            PlayerStats.baseDamage * (
+            PlayerStats.cityDamage *
+            PlayerStats.heroDamage *
+            PlayerStats.rebirthDamage *
+            PlayerStats.perkDamage);
         health -= amount;
-        healthBar.fillAmount = health / startHealth;
+        healthBar.fillAmount = health / startHealth; 
 
         if (health <= 0 && !isDead)
             Die();
@@ -38,6 +45,11 @@ public class Enemy : MonoBehaviour
 
     void Die() {
         isDead = true;
+        int rand = Random.Range(1, 5);
+        PlayerStats.exp += rand;
+        Instantiate(coin, transform.position, Quaternion.identity);
+        
+        
 
         //GameObject effect = (GameObject)Instantiate(deathEffect, transform.position, Quaternion.identity);
         //Destroy(effect, 5f);
@@ -45,11 +57,14 @@ public class Enemy : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void OnCollisionEnter2D(Collision2D collision) {
+    public void OnCollisionEnter2D(Collision2D col) {
         Debug.Log("Kolizja");
-        GameController.instance.PlayerHP -= enemyDamage;
-        speed = 0f;
-        Destroy(gameObject);
+        if (col.gameObject.tag != "Enemy") {
+            PlayerStats.hp -= enemyDamage;
+            speed = 0f;
+            Destroy(gameObject);
+        }
     }
+        
 }
 
