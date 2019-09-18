@@ -61,7 +61,6 @@ public class Bullet : MonoBehaviour
         Damage(target);
         Destroy(gameObject);
         Instantiate(projectileExplosion, transform.position, Quaternion.identity);
-        Destroy(projectileExplosion, 2f);
     }
      void Damage(Transform enemy) {
         Enemy e = enemy.GetComponent<Enemy>();
